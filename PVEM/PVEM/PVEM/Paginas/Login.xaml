@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PVEM.Paginas.Login">
+
+    <ContentPage.Content>
+        <StackLayout BackgroundColor="#727272">
+            <StackLayout VerticalOptions="CenterAndExpand" Padding="30" Spacing="30">
+                <Image Source="Logo.png"/>
+                <Entry Placeholder="Digite o e-mail"
+                       x:Name="Email"
+                       Text="admin@pve.com.br"/>
+                <Entry Placeholder="Digite a senha"
+                    IsPassword="True"
+                    x:Name="Senha"
+                       Text="123456"/>
+                <Button Text="Ir"
+                    x:Name="Ir"
+                    Margin="20"/>
+                <Label x:Name="Retorno" 
+                    Text="....."/>
+            </StackLayout>
+            <!-- Place new controls here -->
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

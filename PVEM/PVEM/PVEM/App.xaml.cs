@@ -11,7 +11,7 @@ namespace PVEM
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            MainPage = new PVEM.Paginas.Login();
         }
 
         protected override void OnStart()

@@ -5,33 +5,35 @@ using System.Text;
 using Xamarin.Forms;
 using System.Net;
 using Newtonsoft.Json;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace PVEM.Servico
 {
     public class UsuarioServico
     {
-        private static readonly string UrlBase = "http://localhost:56110/Mobile/{0}";
+        private static readonly string UrlBase = "http://192.168.43.198:56110/Mobile/{0}";
 
         public static MobileUsuarioModel BuscarUsuario(string login, string senha)
         {
             string urlBuscarUsuario = String.Format(UrlBase, "GetUsuario");
 
-            MobileLoginModel loginModel = new MobileLoginModel()
+
+            FormUrlEncodedContent param = new FormUrlEncodedContent(new[]
             {
-                Login = login,
-                Senha = senha
-            };
+                new KeyValuePair<string,string> ("Login",login),
+                new KeyValuePair<string,string> ("Senha",senha)
+            });
+         
+            MobileUsuarioModel usuarioModel = null;
 
-            string loginJson = JsonConvert.SerializeObject(loginModel);
+            HttpClient requisicao = new HttpClient();
+            HttpResponseMessage resposta =  requisicao.PostAsync(urlBuscarUsuario, param).GetAwaiter().GetResult();
 
-            var cli = new WebClient();
-            cli.Headers[HttpRequestHeader.ContentType] = "application/json";
-            var response =  cli.UploadString(urlBuscarUsuario, loginJson);
-
-            MobileUsuarioModel usuarioModel = new MobileUsuarioModel();
-
-            /*if (response != "null")
-                usuarioModel = JsonConvert.DeserializeObject<MobileUsuarioModel>(response);*/
+            if (resposta.StatusCode == HttpStatusCode.OK)
+            {
+                usuarioModel = JsonConvert.DeserializeObject<MobileUsuarioModel>(resposta.Content.ReadAsStringAsync().Result);
+            }
 
             return usuarioModel;
         }
