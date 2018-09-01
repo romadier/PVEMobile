@@ -1,6 +1,6 @@
 ﻿using PVEM.Banco;
 using PVEM.Servico;
-using PVEM.Servico.Modelo;
+using PVEM.Modelo;
 using PVEM.Sessao;
 using System;
 using System.Collections.Generic;

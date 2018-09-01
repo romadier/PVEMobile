@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using SQLite;
-using System.Linq;
+﻿using SQLite;
 
-namespace PVEM.Servico.Modelo
+namespace PVEM.Modelo
 {
     [Table("Usuario")]
     public class MobileUsuarioModel

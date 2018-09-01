@@ -1,4 +1,4 @@
-﻿using PVEM.Servico.Modelo;
+﻿using PVEM.Modelo;
 using System;
 using System.Collections.Generic;
 using System.Text;

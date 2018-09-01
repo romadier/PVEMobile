@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace SmartAdminMvc.Models
+namespace PVEM.Modelo
 {
+    /*
     public class QuestionarioForm
     {
         public int IdtQuestionario { get; set; }
@@ -23,8 +23,9 @@ namespace SmartAdminMvc.Models
         public List<QuestionarioCompetenciasForms> Itens { get; set; }
 
         public List<QuestionarioDetalheForm> Detalhes { get; set; }
-    }
+    }*/
 
+        /*
     public class QuestionarioDetalheForm
     {
         public PerfilRespondenteForm Perfil { get; set; }
@@ -35,7 +36,8 @@ namespace SmartAdminMvc.Models
 
         public string NomQuestionario { get; set; }
     }
-
+    */
+    /*
     public class QuestionarioCompetenciasForms
     {
 
@@ -63,16 +65,12 @@ namespace SmartAdminMvc.Models
 
         public int? IdtQuestionarioPergunta { get; set; }
 
-        [Required]
         public int IdtRelacionamentoHabilidadePergunta { get; set; }
 
-        [Required]
         public string DescPergunta { get; set; }
 
-        [Required]
         public short Etapa { get; set; }
 
-        [Required]
         public TipoResposta TipoResposta { get; set; }
 
         public List<short> TiposDireto { get; set; }
@@ -137,6 +135,7 @@ namespace SmartAdminMvc.Models
 
         public string DescPerfil { get; set; }
     }
+    */
 
     public class RespostaQuestionarioForm
     {

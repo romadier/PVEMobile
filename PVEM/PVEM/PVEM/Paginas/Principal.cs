@@ -1,4 +1,5 @@
-﻿using PVEM.Sessao;
+﻿using PVEM.Banco;
+using PVEM.Sessao;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace PVEM.Paginas
 	{
 		public Principal ()
 		{
+
             NavigationPage.SetHasNavigationBar(this, false);
             Button btnQuestionarios = new Button
             {
@@ -61,7 +63,20 @@ namespace PVEM.Paginas
         }
         public void ListarQuestionarios(object sender, EventArgs args)
         {
-            Navigation.PushAsync(new ListarQuestionarios());
+            AcessoBanco banco = new AcessoBanco();
+
+            DateTime? ultimaSincronizacao = banco.UltimaSincronizacao(Session.Instance.UsuarioLogado.IdAspNetUser);
+
+            if (ultimaSincronizacao == null)
+            {
+                DisplayAlert("Primeiro Acesso", "Você precisa realizar a sincronização dos dados para dar continuidade.", "OK");
+            }
+            else
+            {
+                Navigation.PushAsync(new ListarQuestionarios());
+            }
+
+
             //App.Current.MainPage = new NavigationPage( new ListarQuestionarios());
         }
         public void Sincronizar(object sender, EventArgs args)

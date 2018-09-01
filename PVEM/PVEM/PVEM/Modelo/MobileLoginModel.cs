@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using SQLite;
 
-namespace PVEM.Servico.Modelo
+namespace PVEM.Modelo
 {
     class MobileLoginModel
     {
+        [PrimaryKey]
         public string Login { get; set; }
 
         public string Senha { get; set; }
