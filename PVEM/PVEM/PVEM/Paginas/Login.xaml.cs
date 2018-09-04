@@ -39,7 +39,6 @@ namespace PVEM.Paginas
 
             if (usuario != null)
             {
-                Retorno.Text = usuario.Nome;
                 usuario.Senha = senha;
                 if (banco.UsuarioJaCadastrado(usuario.IdAspNetUser))
                 {
@@ -56,7 +55,6 @@ namespace PVEM.Paginas
             else
             {
                 DisplayAlert("Erro ao validar usuário", "Usuário ou Senha Inválido!", "Ok");
-                Retorno.Text = "Usuário ou Senha Inválida!";
             }
               
         }

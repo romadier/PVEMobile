@@ -9,8 +9,6 @@ namespace PVEM.Modelo
 
         public string NomMunicipio { get; set; }
 
-        public int? CodIBGE { get; set; }
-
         public int IdtEmpresa { get; set; }
 
         public string UF { get; set; }

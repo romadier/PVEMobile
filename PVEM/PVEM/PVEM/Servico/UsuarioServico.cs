@@ -12,7 +12,7 @@ namespace PVEM.Servico
 {
     public class UsuarioServico
     {
-        private static readonly string UrlBase = "http://192.168.0.22:56110/{0}";
+        private static readonly string UrlBase = "https://wavpe-qa.asevsa01.p.azurewebsites.net/{0}";
 
         public static MobileUsuarioModel BuscarUsuario(string login, string senha)
         {
@@ -77,6 +77,79 @@ namespace PVEM.Servico
             return resultado;
         }
 
+
+        public static List<Municipio> BaixarMunicipios()
+        {
+            string urlAux = String.Format(UrlBase, "/Questionario/GetMunicipios");
+
+            List<Municipio> resultado = null;
+
+            HttpClient requisicao = new HttpClient();
+            HttpResponseMessage resposta = requisicao.GetAsync(urlAux).GetAwaiter().GetResult();
+
+            if (resposta.StatusCode == HttpStatusCode.OK)
+            {
+                resultado = JsonConvert.DeserializeObject<List<Municipio>>(resposta.Content.ReadAsStringAsync().Result);
+            }
+
+            return resultado;
+        }
+
+        public static List<OpcaoTipoResposta> BaixarOpcoes()
+        {
+            string urlAux = String.Format(UrlBase, "/Questionario/GetOpcoesTipoResposta");
+
+            List<OpcaoTipoResposta> resultado = null;
+
+            HttpClient requisicao = new HttpClient();
+            HttpResponseMessage resposta = requisicao.GetAsync(urlAux).GetAwaiter().GetResult();
+
+            if (resposta.StatusCode == HttpStatusCode.OK)
+            {
+                resultado = JsonConvert.DeserializeObject<List<OpcaoTipoResposta>>(resposta.Content.ReadAsStringAsync().Result);
+            }
+
+            return resultado;
+
+        }
+
+        public static List<AlternativaICQ> BaixarAlternativas()
+        {
+            string urlAux = String.Format(UrlBase, "/Questionario/GetAlternativasICQ");
+
+            List<AlternativaICQ> resultado = null;
+
+            HttpClient requisicao = new HttpClient();
+            HttpResponseMessage resposta = requisicao.GetAsync(urlAux).GetAwaiter().GetResult();
+
+            if (resposta.StatusCode == HttpStatusCode.OK)
+            {
+                resultado = JsonConvert.DeserializeObject<List<AlternativaICQ>>(resposta.Content.ReadAsStringAsync().Result);
+            }
+
+            return resultado;
+        }
+
+        public static bool TransmitirResposta(RespostaQuestionarioForm form)
+        {
+            string urlGravar = String.Format(UrlBase, "Questionario/GravarRespostas");
+            bool sucesso = false;
+
+            HttpClient requisicao = new HttpClient();
+            requisicao.DefaultRequestHeaders.Accept.Clear();
+            requisicao.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var content = new StringContent(JsonConvert.SerializeObject(form), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage resposta = requisicao.PostAsync(urlGravar, content).GetAwaiter().GetResult();
+
+            if (resposta.StatusCode != HttpStatusCode.OK)
+            {
+                sucesso = true;
+            }
+
+            return sucesso;
+        }
 
     }
 }

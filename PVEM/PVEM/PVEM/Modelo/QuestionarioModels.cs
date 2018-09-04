@@ -167,6 +167,12 @@ namespace PVEM.Modelo
 
         public int IdtCiclo { get; set; }
 
+        public string Usuario { get; set; }
+
+        public string IdDevice { get; set; }
+
+        public DateTime? DataHoraDevice { get; set; }
+
     }
 
     public class CompetenciaForm

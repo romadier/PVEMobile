@@ -1,13 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="PVEM.Paginas.ResponderQuestionario">
+             x:Class="PVEM.Paginas.ResponderQuestionario"
+             NavigationPage.HasNavigationBar="False">
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-            <Label x:Name="IdQuestionario"/>
-        </StackLayout>
+        <ScrollView>
+            <StackLayout x:Name="StackLayoutPrincipal" Margin="10,0,10,0">
+                <Label x:Name="NomeRelatorio" Margin="0,10,0,10" FontSize="Large" />
+                <Label x:Name="TextoCabecalho" Margin="0,10,0,10"/>
+                <Label Text="Perfil Respondente" Margin="0,10,0,10" FontSize="Large" />
+                <BoxView HeightRequest="1" BackgroundColor="Black" HorizontalOptions="FillAndExpand" />
+                <Label Text="Município" />
+                <Picker x:Name="Municipio" Title="Selecione o Municipio">
+                    <Picker.Items>
+
+                    </Picker.Items>
+                </Picker>
+            </StackLayout>
+        </ScrollView>
     </ContentPage.Content>
 </ContentPage>

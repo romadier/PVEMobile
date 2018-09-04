@@ -9,16 +9,14 @@
                 <Image Source="Logo.png"/>
                 <Entry Placeholder="Digite o e-mail"
                        x:Name="Email"
-                       Text="admin@pve.com.br"/>
+                       Text=""/>
                 <Entry Placeholder="Digite a senha"
                     IsPassword="True"
                     x:Name="Senha"
-                       Text="123456"/>
+                       Text=""/>
                 <Button Text="Ir"
                     x:Name="Ir"
                     Margin="20"/>
-                <Label x:Name="Retorno" 
-                    Text="....."/>
             </StackLayout>
             <!-- Place new controls here -->
         </StackLayout>

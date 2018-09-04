@@ -1,4 +1,5 @@
-﻿using PVEM.Banco;
+﻿using Newtonsoft.Json;
+using PVEM.Banco;
 using PVEM.Modelo;
 using PVEM.Servico;
 using PVEM.Sessao;
@@ -87,6 +88,40 @@ namespace PVEM.Paginas
                         banco.GravarQuestionario(rqf);
                     }
                 }
+
+                List<Municipio> municipios = UsuarioServico.BaixarMunicipios();
+
+                foreach (var item in municipios)
+                {
+                    banco.GravarMunicipio(item);
+                }
+
+                List<AlternativaICQ> alteranativas = UsuarioServico.BaixarAlternativas();
+
+                foreach (var item in alteranativas)
+                {
+                    banco.GravarAlternativa(item);
+                }
+
+                List<OpcaoTipoResposta> opcoes = UsuarioServico.BaixarOpcoes();
+
+                foreach (var item in opcoes)
+                {
+                    banco.GravarOpcao(item);
+                }
+
+                List<QuestionarioRespondido> pendentes = banco.ListarRespostasNaoEnvidas();
+
+                foreach (var item in pendentes)
+                {
+                    RespostaQuestionarioForm formTmp = JsonConvert.DeserializeObject<RespostaQuestionarioForm>(item.Formulario);
+                    if (UsuarioServico.TransmitirResposta(formTmp))
+                    {
+                        banco.MarcarRespostaComoEnviada(item.Id);
+                    }
+                }
+
+
                 lblUltimaSincronizacao.Text = banco.GravarUltimaSincronizacao(usuario).ToString("dd/MM/yyyy HH:mm:ss");
 
                 DisplayAlert("Sincronização", "Efetuada com Sucesso!", "OK");

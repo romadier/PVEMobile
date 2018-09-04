@@ -39,7 +39,8 @@ namespace PVEM.Paginas
         }
         public void IrQuestionario(object sender, EventArgs args)
         {
-            DisplayAlert("Questionario", (sender as Button).CommandParameter.ToString(), "OK");
+            Navigation.PushAsync(new Paginas.ResponderQuestionario(Int64.Parse((sender as Button).CommandParameter.ToString())));
+            //DisplayAlert("Questionario", (sender as Button).CommandParameter.ToString(), "OK");
         }
     }
 }
