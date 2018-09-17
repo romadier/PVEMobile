@@ -6,14 +6,14 @@
     <ContentPage.Content>
         <StackLayout BackgroundColor="#727272">
             <StackLayout VerticalOptions="CenterAndExpand" Padding="30" Spacing="30">
-                <Image Source="Logo.png"/>
+                <Image Source="logo.png"/>
                 <Entry Placeholder="Digite o e-mail"
                        x:Name="Email"
-                       Text=""/>
+                       Text="admin@pve.com.br"/>
                 <Entry Placeholder="Digite a senha"
                     IsPassword="True"
                     x:Name="Senha"
-                       Text=""/>
+                       Text="123456"/>
                 <Button Text="Ir"
                     x:Name="Ir"
                     Margin="20"/>

@@ -2,5 +2,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="br.org.institutovotorantim.pve" android:installLocation="auto">
 	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="25" />
 	<uses-permission android:name="android.permission.INTERNET" />
-	<application android:label="PVEM.Android" android:theme="Institucional"></application>
+	<application android:label="PVEM.Android" android:icon="@drawable/logo_pve"></application>
 </manifest>

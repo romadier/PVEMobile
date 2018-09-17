@@ -2679,10 +2679,10 @@ namespace PVEM.Droid
 			public const int ic_vol_type_tv_light = 2130837739;
 			
 			// aapt resource value: 0x7f0200ec
-			public const int Logo = 2130837740;
+			public const int logo = 2130837740;
 			
 			// aapt resource value: 0x7f0200ed
-			public const int logo2 = 2130837741;
+			public const int logo_pve = 2130837741;
 			
 			// aapt resource value: 0x7f0200ee
 			public const int mr_button_connected_dark = 2130837742;

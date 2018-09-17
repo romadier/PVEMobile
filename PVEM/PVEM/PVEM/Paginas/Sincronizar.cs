@@ -15,6 +15,7 @@ namespace PVEM.Paginas
     public class Sincronizar : ContentPage
     {
         private Label lblUltimaSincronizacao;
+        private bool _executandoBotao = false;
 
         public Sincronizar()
         {
@@ -43,9 +44,10 @@ namespace PVEM.Paginas
             {
                 Children = {
                     new Image {
-                        Source ="logo2.png",
+                        Source ="logo.png",
                         BackgroundColor = Color.FromHex("#3A3732"),
-                        HorizontalOptions = LayoutOptions.Fill
+                        HorizontalOptions = LayoutOptions.Fill,
+                        HeightRequest = 75
                     },
                     new StackLayout {
                         Padding = 20,
@@ -69,67 +71,90 @@ namespace PVEM.Paginas
 
         public void AcaoSincronizar(object sender, EventArgs args)
         {
+            if (_executandoBotao)
+            {
+                DisplayAlert("Sincronização", "Já iniciada, aguarde!", "OK");
+                return;
+            }
+
             try
             {
-                AcessoBanco banco = new AcessoBanco();
-
-                string usuario = Session.Instance.UsuarioLogado.IdAspNetUser;
-
-                List<long> questionarios = UsuarioServico.PegarQuestionariosUsuario(usuario);
-
-                banco.GravarQuestionariosUsuario(usuario, questionarios);
-
-                foreach (var item in questionarios)
+                _executandoBotao = true;
+                
+                try
                 {
-                    if (!banco.ExisteQuestionario(item))
+                    (sender as Button).Clicked -= AcaoSincronizar;
+
+                    AcessoBanco banco = new AcessoBanco();
+
+                    string usuario = Session.Instance.UsuarioLogado.IdAspNetUser;
+
+                    List<long> questionarios = UsuarioServico.PegarQuestionariosUsuario(usuario);
+
+                    banco.GravarQuestionariosUsuario(usuario, questionarios);
+
+                    foreach (var item in questionarios)
                     {
-                        RespostaQuestionarioForm rqf = UsuarioServico.BaixarQuestionario(item);
+                        if (!banco.ExisteQuestionario(item))
+                        {
+                            RespostaQuestionarioForm rqf = UsuarioServico.BaixarQuestionario(item);
 
-                        banco.GravarQuestionario(rqf);
+                            banco.GravarQuestionario(rqf);
+                        }
                     }
-                }
 
-                List<Municipio> municipios = UsuarioServico.BaixarMunicipios();
+                    List<Municipio> municipios = UsuarioServico.BaixarMunicipios();
 
-                foreach (var item in municipios)
-                {
-                    banco.GravarMunicipio(item);
-                }
-
-                List<AlternativaICQ> alteranativas = UsuarioServico.BaixarAlternativas();
-
-                foreach (var item in alteranativas)
-                {
-                    banco.GravarAlternativa(item);
-                }
-
-                List<OpcaoTipoResposta> opcoes = UsuarioServico.BaixarOpcoes();
-
-                foreach (var item in opcoes)
-                {
-                    banco.GravarOpcao(item);
-                }
-
-                List<QuestionarioRespondido> pendentes = banco.ListarRespostasNaoEnvidas();
-
-                foreach (var item in pendentes)
-                {
-                    RespostaQuestionarioForm formTmp = JsonConvert.DeserializeObject<RespostaQuestionarioForm>(item.Formulario);
-                    if (UsuarioServico.TransmitirResposta(formTmp))
+                    foreach (var item in municipios)
                     {
-                        banco.MarcarRespostaComoEnviada(item.Id);
+                        banco.GravarMunicipio(item);
                     }
+
+                    List<AlternativaICQ> alteranativas = UsuarioServico.BaixarAlternativas();
+
+                    foreach (var item in alteranativas)
+                    {
+                        banco.GravarAlternativa(item);
+                    }
+
+                    List<OpcaoTipoResposta> opcoes = UsuarioServico.BaixarOpcoes();
+
+                    foreach (var item in opcoes)
+                    {
+                        banco.GravarOpcao(item);
+                    }
+
+                    List<QuestionarioRespondido> pendentes = banco.ListarRespostasNaoEnvidas();
+
+                    foreach (var item in pendentes)
+                    {
+                        RespostaQuestionarioForm formTmp = JsonConvert.DeserializeObject<RespostaQuestionarioForm>(item.Formulario);
+                        if (UsuarioServico.TransmitirResposta(formTmp))
+                        {
+                            banco.MarcarRespostaComoEnviada(item.Id);
+                        }
+                    }
+
+
+                    lblUltimaSincronizacao.Text = banco.GravarUltimaSincronizacao(usuario).ToString("dd/MM/yyyy HH:mm:ss");
+
+                    DisplayAlert("Sincronização", "Efetuada com Sucesso!", "OK");
+
+                    (sender as Button).Clicked += AcaoSincronizar;
+
+                }
+                catch (Exception e)
+                {
+                    DisplayAlert("Falha na Sincronização", e.Message, "OK");
+                    (sender as Button).Clicked += AcaoSincronizar;
                 }
 
-
-                lblUltimaSincronizacao.Text = banco.GravarUltimaSincronizacao(usuario).ToString("dd/MM/yyyy HH:mm:ss");
-
-                DisplayAlert("Sincronização", "Efetuada com Sucesso!", "OK");
             }
-            catch (Exception e)
+            finally
             {
-                DisplayAlert("Falha na Sincronização", e.Message, "OK");
+                _executandoBotao = false;
             }
+
 
         }
     }

@@ -23,40 +23,48 @@ namespace PVEM.Paginas
 
         public void BuscarUsuario(object sender, EventArgs args)
         {
-            string login = Email.Text;
-            string senha = Senha.Text;
-            AcessoBanco banco = new AcessoBanco();
-
-            MobileUsuarioModel usuario = null;
             try
             {
-                usuario = UsuarioServico.BuscarUsuario(login, senha);
-            }
-            catch 
-            {
-                usuario = banco.ValidarSenhaUsuario(login, senha);
-            }
+                Ir.IsEnabled = false;
+                string login = Email.Text;
+                string senha = Senha.Text;
+                AcessoBanco banco = new AcessoBanco();
 
-            if (usuario != null)
-            {
-                usuario.Senha = senha;
-                if (banco.UsuarioJaCadastrado(usuario.IdAspNetUser))
+                MobileUsuarioModel usuario = null;
+                try
                 {
-                    banco.AtualizarUsuario(usuario);
+                    usuario = UsuarioServico.BuscarUsuario(login, senha);
+                }
+                catch
+                {
+                    usuario = banco.ValidarSenhaUsuario(login, senha);
+                }
+
+                if (usuario != null)
+                {
+                    usuario.Senha = senha;
+                    if (banco.UsuarioJaCadastrado(usuario.IdAspNetUser))
+                    {
+                        banco.AtualizarUsuario(usuario);
+                    }
+                    else
+                    {
+                        banco.IncluirUsuario(usuario);
+                    }
+                    Session.Instance.UsuarioLogado = usuario;
+                    App.Current.MainPage = new NavigationPage(new Principal());
+
                 }
                 else
                 {
-                    banco.IncluirUsuario(usuario);
+                    DisplayAlert("Erro ao validar usuário", "Usuário ou Senha Inválido!", "Ok");
                 }
-                Session.Instance.UsuarioLogado = usuario;
-                App.Current.MainPage = new NavigationPage (new Principal());
-
             }
-            else
+            finally
             {
-                DisplayAlert("Erro ao validar usuário", "Usuário ou Senha Inválido!", "Ok");
-            }
-              
+                Ir.IsEnabled = true;
+                Ir.Clicked += BuscarUsuario;
+            }              
         }
 
     }

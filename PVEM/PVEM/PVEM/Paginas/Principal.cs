@@ -11,6 +11,8 @@ namespace PVEM.Paginas
 {
 	public class Principal : ContentPage
 	{
+        private bool _executandoBotao = false;
+
 		public Principal ()
 		{
 
@@ -29,12 +31,31 @@ namespace PVEM.Paginas
 
             btnSincronizar.Clicked += Sincronizar;
 
+            int questionariosNaoRespondidos = (new AcessoBanco()).ListarRespostasNaoEnvidas().Count();
+
+            string mensagem = "";
+
+            if (questionariosNaoRespondidos == 1)
+            {
+                mensagem = "Existe 1 formulário pendente de envio, utilize a sincronização para que o mesmo seja enviado.";
+            }
+            else
+            if (questionariosNaoRespondidos > 1)
+            {
+                mensagem = String.Format("Existem {0} formulários pendentes de sincronização, utilize a sincronização para que o mesmo seja enviado.", questionariosNaoRespondidos);
+            }
+            else
+            {
+                mensagem = String.Format("Não existe formulário pendentes de envio!", questionariosNaoRespondidos);
+            }
+
             Content = new StackLayout {
 				Children = {
                     new Image {
-                        Source ="logo2.png",
+                        Source ="logo.png",
                         BackgroundColor = Color.FromHex("#3A3732"),
-                        HorizontalOptions = LayoutOptions.Fill
+                        HorizontalOptions = LayoutOptions.Fill,
+                        HeightRequest = 75
                     },
 					new Label {
                         Text = Session.Instance.UsuarioLogado.Nome,
@@ -54,8 +75,13 @@ namespace PVEM.Paginas
                             btnQuestionarios,
                             btnSincronizar
                         }
+                    },
+                    new Label {
+                        Text = mensagem,
+                        FontSize = Device.GetNamedSize(NamedSize.Default, typeof(Label)),
+                        Margin = 20
                     }
-                    
+
                 }
 
             };
@@ -63,26 +89,50 @@ namespace PVEM.Paginas
         }
         public void ListarQuestionarios(object sender, EventArgs args)
         {
-            AcessoBanco banco = new AcessoBanco();
-
-            DateTime? ultimaSincronizacao = banco.UltimaSincronizacao(Session.Instance.UsuarioLogado.IdAspNetUser);
-
-            if (ultimaSincronizacao == null)
+            if (_executandoBotao)
             {
-                DisplayAlert("Primeiro Acesso", "Você precisa realizar a sincronização dos dados para dar continuidade.", "OK");
+                return;
             }
-            else
+            try
             {
-                Navigation.PushAsync(new ListarQuestionarios());
-            }
+                _executandoBotao = true;
+                AcessoBanco banco = new AcessoBanco();
 
+                DateTime? ultimaSincronizacao = banco.UltimaSincronizacao(Session.Instance.UsuarioLogado.IdAspNetUser);
+
+                if (ultimaSincronizacao == null)
+                {
+                    DisplayAlert("Primeiro Acesso", "Você precisa realizar a sincronização dos dados para dar continuidade.", "OK");
+                }
+                else
+                {
+                    Navigation.PushAsync(new ListarQuestionarios());
+                }
+
+            }
+            finally
+            {
+                _executandoBotao = false;
+            }
 
             //App.Current.MainPage = new NavigationPage( new ListarQuestionarios());
         }
+
         public void Sincronizar(object sender, EventArgs args)
         {
-            Navigation.PushAsync(new Paginas.Sincronizar());
-            //App.Current.MainPage = new NavigationPage( new Paginas.Sincronizar());
+            if (_executandoBotao)
+            {
+                return;
+            }
+            try
+            {
+                _executandoBotao = true;
+                Navigation.PushAsync(new Paginas.Sincronizar());
+            }
+            finally
+            {
+                _executandoBotao = false;
+            }
         }
 
     }
