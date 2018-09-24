@@ -21,11 +21,15 @@ namespace PVEM.Paginas
             Ir.Clicked += BuscarUsuario;
         }
 
-        public void BuscarUsuario(object sender, EventArgs args)
+        public async void BuscarUsuario(object sender, EventArgs args)
         {
             try
             {
                 Ir.IsEnabled = false;
+                activityIndicator.IsVisible = true;
+                activityIndicator.IsRunning = true;
+
+                await Task.Delay(500);
                 string login = Email.Text;
                 string senha = Senha.Text;
                 AcessoBanco banco = new AcessoBanco();
@@ -57,14 +61,15 @@ namespace PVEM.Paginas
                 }
                 else
                 {
-                    DisplayAlert("Erro ao validar usuário", "Usuário ou Senha Inválido!", "Ok");
+                    activityIndicator.IsRunning = false;
+                    await DisplayAlert("Erro ao validar usuário", "Usuário ou Senha Inválido!", "Ok");
                 }
             }
             finally
             {
                 Ir.IsEnabled = true;
-                Ir.Clicked += BuscarUsuario;
-            }              
+                activityIndicator.IsVisible = false;
+            }
         }
 
     }

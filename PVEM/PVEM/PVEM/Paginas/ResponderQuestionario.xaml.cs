@@ -18,6 +18,8 @@ namespace PVEM.Paginas
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class ResponderQuestionario : ContentPage
 	{
+        private bool _executandoBotao = false;
+
         private Dictionary<int, RadioButtonGroupView> _alternativas;
         private Dictionary<int, RadioButtonGroupView> _opcoes;
         private long _IdtRespostaQuestionario;
@@ -132,76 +134,85 @@ namespace PVEM.Paginas
 
         private void Salvar(object sender, EventArgs args)
         {
-            if (Municipio.SelectedIndex == -1)
+            if (_executandoBotao)
             {
-                DisplayAlert("Questionário", "Selecione o Município!", "OK");
                 return;
             }
-
-            foreach (var item in _opcoes)
-            {
-                if (item.Value.SelectedIndex == -1)
-                {
-                    DisplayAlert("Questionário", "Uma ou mais perguntas estão sem resposta selecionada!", "OK");
-                    return;
-                }
-            }
-
-            foreach (var item in _alternativas)
-            {
-                if (item.Value.SelectedIndex == -1)
-                {
-                    DisplayAlert("Questionário", "Uma ou mais perguntas estão sem resposta selecionada!", "OK");
-                    return;
-                }
-            }
-
-            AcessoBanco banco = new AcessoBanco();
-
-            Municipio municipio = banco.PegarMunicipioPorNome((string) Municipio.SelectedItem);
-
-            _form.Municipio = municipio;
-
-            foreach (var item in _form.RespostasPerfil)
-            {
-                item.IdtAlternativaICQ = (int) _alternativas[item.IdtItemCabecalhoQuestionario].SelectedItem ;
-            }
-
-            foreach (var comp in _form.Competencias)
-            {
-                foreach (var item in comp.Respostas)
-                {
-                    item.IdtOpcaoTipoResposta = (int) _opcoes[item.IdtQuestionarioPergunta].SelectedItem;
-                }
-            }
-
-            banco.GravarResposta(_form, Session.Instance.UsuarioLogado.IdAspNetUser);
-
             try
             {
-                List<QuestionarioRespondido> pendentes = banco.ListarRespostasNaoEnvidas();
-
-                foreach (var item in pendentes)
+                _executandoBotao = true;
+                if (Municipio.SelectedIndex == -1)
                 {
-                    RespostaQuestionarioForm formTmp = JsonConvert.DeserializeObject<RespostaQuestionarioForm>(item.Formulario);
-                    if (UsuarioServico.TransmitirResposta(formTmp))
+                    DisplayAlert("Questionário", "Selecione o Município!", "OK");
+                    return;
+                }
+
+                foreach (var item in _opcoes)
+                {
+                    if (item.Value.SelectedIndex == -1)
                     {
-                        banco.MarcarRespostaComoEnviada(item.Id);
+                        DisplayAlert("Questionário", "Uma ou mais perguntas estão sem resposta selecionada!", "OK");
+                        return;
                     }
                 }
-                
+
+                foreach (var item in _alternativas)
+                {
+                    if (item.Value.SelectedIndex == -1)
+                    {
+                        DisplayAlert("Questionário", "Uma ou mais perguntas estão sem resposta selecionada!", "OK");
+                        return;
+                    }
+                }
+
+                AcessoBanco banco = new AcessoBanco();
+
+                Municipio municipio = banco.PegarMunicipioPorNome((string)Municipio.SelectedItem);
+
+                _form.Municipio = municipio;
+
+                foreach (var item in _form.RespostasPerfil)
+                {
+                    item.IdtAlternativaICQ = (int)_alternativas[item.IdtItemCabecalhoQuestionario].SelectedItem;
+                }
+
+                foreach (var comp in _form.Competencias)
+                {
+                    foreach (var item in comp.Respostas)
+                    {
+                        item.IdtOpcaoTipoResposta = (int)_opcoes[item.IdtQuestionarioPergunta].SelectedItem;
+                    }
+                }
+
+                banco.GravarResposta(_form, Session.Instance.UsuarioLogado.IdAspNetUser);
+
+                try
+                {
+                    List<QuestionarioRespondido> pendentes = banco.ListarRespostasNaoEnvidas();
+
+                    foreach (var item in pendentes)
+                    {
+                        RespostaQuestionarioForm formTmp = JsonConvert.DeserializeObject<RespostaQuestionarioForm>(item.Formulario);
+                        if (UsuarioServico.TransmitirResposta(formTmp))
+                        {
+                            banco.MarcarRespostaComoEnviada(item.Id);
+                        }
+                    }
+
+                }
+                catch (Exception)
+                {
+
+
+                }
+
+                DisplayAlert("Questionário", "Incluído com Sucesso", "OK");
+                Navigation.PopAsync();
             }
-            catch (Exception)
+            finally
             {
-
-                
+                _executandoBotao = false;
             }
-
-            DisplayAlert("Questionário", "Incluído com Sucesso", "OK");
-            Navigation.PopAsync();
-
-
         }
-
     }
 }

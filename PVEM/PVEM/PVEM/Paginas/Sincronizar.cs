@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace PVEM.Paginas
@@ -15,11 +15,12 @@ namespace PVEM.Paginas
     public class Sincronizar : ContentPage
     {
         private Label lblUltimaSincronizacao;
-        private bool _executandoBotao = false;
+        private ActivityIndicator activityIndicator;
 
         public Sincronizar()
         {
             AcessoBanco banco = new AcessoBanco();
+
             NavigationPage.SetHasNavigationBar(this, false);
 
             DateTime? ultimaSincronizacao = banco.UltimaSincronizacao(Session.Instance.UsuarioLogado.IdAspNetUser);
@@ -40,6 +41,8 @@ namespace PVEM.Paginas
                 Margin = 10
             };
 
+            activityIndicator = new ActivityIndicator { IsRunning = true, IsVisible = false, Color = Color.Black };
+
             Content = new StackLayout
             {
                 Children = {
@@ -59,31 +62,26 @@ namespace PVEM.Paginas
                                 Margin = 10
                             },
                             lblUltimaSincronizacao,
+                            activityIndicator,
                             btnSincronizar
                         }
                     }
                 }
             };
 
-            btnSincronizar.Clicked += AcaoSincronizar;
+            btnSincronizar.Clicked +=  AcaoSincronizar;
 
         }
-
-        public void AcaoSincronizar(object sender, EventArgs args)
+        
+        public async void AcaoSincronizar(object sender, EventArgs args)
         {
-            if (_executandoBotao)
-            {
-                DisplayAlert("Sincronização", "Já iniciada, aguarde!", "OK");
-                return;
-            }
-
             try
             {
-                _executandoBotao = true;
-                
                 try
                 {
-                    (sender as Button).Clicked -= AcaoSincronizar;
+                    (sender as Button).IsEnabled = false;
+                    activityIndicator.IsVisible = true;
+                    await Task.Delay(500);
 
                     AcessoBanco banco = new AcessoBanco();
 
@@ -135,27 +133,22 @@ namespace PVEM.Paginas
                         }
                     }
 
-
                     lblUltimaSincronizacao.Text = banco.GravarUltimaSincronizacao(usuario).ToString("dd/MM/yyyy HH:mm:ss");
 
-                    DisplayAlert("Sincronização", "Efetuada com Sucesso!", "OK");
-
-                    (sender as Button).Clicked += AcaoSincronizar;
+                    activityIndicator.IsVisible = false;
+                    await DisplayAlert("Sincronização", "Efetuada com Sucesso!", "OK");
 
                 }
                 catch (Exception e)
                 {
-                    DisplayAlert("Falha na Sincronização", e.Message, "OK");
-                    (sender as Button).Clicked += AcaoSincronizar;
+                    activityIndicator.IsVisible = false;
+                    await DisplayAlert("Falha na Sincronização", e.Message, "OK");
                 }
-
             }
             finally
             {
-                _executandoBotao = false;
+                (sender as Button).IsEnabled = true;
             }
-
-
         }
     }
 }

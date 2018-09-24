@@ -6,7 +6,6 @@
     <ContentPage.Content>
         <ScrollView>
             <StackLayout >
-
                 <Image Source="logo.png"
                        HeightRequest="75"   
                        BackgroundColor="#3A3732"

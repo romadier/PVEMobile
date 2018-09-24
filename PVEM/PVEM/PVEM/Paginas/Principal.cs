@@ -4,15 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace PVEM.Paginas
 {
 	public class Principal : ContentPage
 	{
-        private bool _executandoBotao = false;
-
 		public Principal ()
 		{
 
@@ -89,13 +87,10 @@ namespace PVEM.Paginas
         }
         public void ListarQuestionarios(object sender, EventArgs args)
         {
-            if (_executandoBotao)
-            {
-                return;
-            }
             try
             {
-                _executandoBotao = true;
+                (sender as Button).IsEnabled = false;
+                Task.Delay(500);
                 AcessoBanco banco = new AcessoBanco();
 
                 DateTime? ultimaSincronizacao = banco.UltimaSincronizacao(Session.Instance.UsuarioLogado.IdAspNetUser);
@@ -112,26 +107,23 @@ namespace PVEM.Paginas
             }
             finally
             {
-                _executandoBotao = false;
+                (sender as Button).IsEnabled = true;
             }
 
             //App.Current.MainPage = new NavigationPage( new ListarQuestionarios());
         }
 
-        public void Sincronizar(object sender, EventArgs args)
+        public async void Sincronizar(object sender, EventArgs args)
         {
-            if (_executandoBotao)
-            {
-                return;
-            }
             try
             {
-                _executandoBotao = true;
-                Navigation.PushAsync(new Paginas.Sincronizar());
+                (sender as Button).IsEnabled = false;
+                await Task.Delay(500);
+                await Navigation.PushAsync(new Paginas.Sincronizar());
             }
             finally
             {
-                _executandoBotao = false;
+                (sender as Button).IsEnabled = true;
             }
         }
 
